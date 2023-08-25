@@ -1,31 +1,53 @@
-import { StyleSheet, Text, View, Button, TextInput} from 'react-native';
-import React, { useState } from 'react';
+import { StyleSheet, Text, View, FlatList, Button, TextInput, Alert} from 'react-native';
+import React, { useState, useEffect } from 'react';
 
 export default function App() {
-  const [numberOne, setNumberOne] = useState('');
-  const [numberTwo, setNumberTwo] = useState('');
-  const [result, setResult] = useState('');
+  const [number, setNumber] = useState('');
+  const [guessed, setGuessed] = useState(false);
+  const [random, setRandom] = useState('');
+  const [times, setTimes] = useState(0);
+  var message = ""
 
-  const minusPressed = () => {
-    setResult(parseInt(numberOne) - parseInt(numberTwo))
-  }
+  useEffect( () => {
+    setRandom(Math.floor(Math.random() * 100) + 1)
+  }, []);
 
-  const plusPressed = () => {
-    setResult(parseInt(numberOne) + parseInt(numberTwo))
-  }
+  console.log(random)
 
+  const pressed = () => {
+    setGuessed(true)
+    setTimes(times+1)
+    }
+
+    const checkNumber = () => {
+      return(
+        <Text style={styles.text}>{parseInt(number)===random ? (correct()) : wrongGuess()}</Text>
+      )
+    }
+
+    const wrongGuess = () => {
+      return(
+        <Text style={styles.text}>{parseInt(number)>random ? <Text>Your guess {number} is too high</Text> : <Text>Your guess {number} is too low</Text>}</Text>
+      )
+    }
+
+    const correct = () => {
+      
+      times.toString
+      message = "You guessed the number in " + times + " guesses"
+      Alert.alert('Correct!', message, [{text: 'OK', onPress: () => console.log('OK Pressed')}])
+  
+  };
 
   return (
     <View style={styles.container}>
 
-      
-      <Text style={styles.text}>Result: {result}</Text>
-      <TextInput style={styles.input} keyboardType="numeric" onChangeText={numberOne => setNumberOne(numberOne)} value={numberOne}/>
-      <TextInput style={styles.input} keyboardType="numeric" onChangeText={numberTwo => setNumberTwo(numberTwo)} value={numberTwo}/>
+      <Text style={styles.text}>{guessed===false ? <Text>Guess a number between 1-100</Text> : checkNumber()}</Text>
+
+      <TextInput style={styles.input} keyboardType="numeric" onChangeText={(number) => {setNumber(number); setGuessed(false)}}/>
       
       <View style={styles.button}>
-      <Button onPress={minusPressed} title=" - " />
-      <Button onPress={plusPressed} title=" + " />
+      <Button onPress={pressed} title=" MAKE GUESS " />
       </View>
 
     </View>
@@ -54,9 +76,8 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    height: 40,
-    width: 200,
-    marginTop: 20,
+    margin: 20,
+    gap: 10,
     justifyContent: 'center',
     flexDirection: 'row'
   }
