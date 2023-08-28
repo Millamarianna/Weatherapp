@@ -1,55 +1,52 @@
-import { StyleSheet, Text, View, FlatList, Button, TextInput, Alert} from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, FlatList, Button, TextInput} from 'react-native';
 import React, { useState, useEffect } from 'react';
 
 export default function App() {
-  const [number, setNumber] = useState('');
-  const [guessed, setGuessed] = useState(false);
-  const [random, setRandom] = useState('');
-  const [times, setTimes] = useState(0);
-  var message = ""
+  const [numberOne, setNumberOne] = useState('');
+  const [numberTwo, setNumberTwo] = useState('');
+  const [result, setResult] = useState('');
+  const [history, setHistory] = useState([]);
+  const [line, setLine] = useState([]);
 
-  useEffect( () => {
-    setRandom(Math.floor(Math.random() * 100) + 1)
-  }, []);
+  const minusPressed = () => {
+    setResult(parseInt(numberOne) - parseInt(numberTwo)); 
+    setLine(numberOne + "-" + numberTwo + "=")
 
-  console.log(random)
-
-  const pressed = () => {
-    setGuessed(true)
-    setTimes(times+1)
     }
 
-    const checkNumber = () => {
-      return(
-        <Text style={styles.text}>{parseInt(number)===random ? (correct()) : wrongGuess()}</Text>
-      )
-    }
+  const plusPressed = () => {
+    setResult(parseInt(numberOne) + parseInt(numberTwo)); 
+    setLine(numberOne + "+" + numberTwo + "=")
 
-    const wrongGuess = () => {
-      return(
-        <Text style={styles.text}>{parseInt(number)>random ? <Text>Your guess {number} is too high</Text> : <Text>Your guess {number} is too low</Text>}</Text>
-      )
-    }
+  }
 
-    const correct = () => {
-      
-      times.toString
-      message = "You guessed the number in " + times + " guesses"
-      Alert.alert('Correct!', message, [{text: 'OK', onPress: () => console.log('OK Pressed')}])
-  
-  };
+  useEffect(() => {
+    setHistory([...history, {line: line + result}]); 
+}, [result]);
+
 
   return (
     <View style={styles.container}>
 
-      <Text style={styles.text}>{guessed===false ? <Text>Guess a number between 1-100</Text> : checkNumber()}</Text>
+      <Text style={styles.text}>Result: {result}</Text>
 
-      <TextInput style={styles.input} keyboardType="numeric" onChangeText={(number) => {setNumber(number); setGuessed(false)}}/>
+      <TextInput style={styles.input} keyboardType="numeric" onChangeText={numberOne => setNumberOne(numberOne)} value={numberOne}/>
+      <TextInput style={styles.input} keyboardType="numeric" onChangeText={numberTwo => setNumberTwo(numberTwo)} value={numberTwo}/>
       
       <View style={styles.button}>
-      <Button onPress={pressed} title=" MAKE GUESS " />
+      <Button onPress={minusPressed} title=" - " />
+      <Button onPress={plusPressed} title=" + " />
       </View>
 
+      <Text style={styles.text}>History:</Text>
+      <FlatList
+        data={history}
+        renderItem={({item}) => <Text>{item.line}</Text>}
+        keyExtractor={(item, index) => index.toString()}
+      />
+
+      <StatusBar style="auto" />
     </View>
   );
 }
