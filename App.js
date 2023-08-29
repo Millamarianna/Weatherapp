@@ -1,48 +1,36 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList, Button, TextInput} from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 export default function App() {
-  const [numberOne, setNumberOne] = useState('');
-  const [numberTwo, setNumberTwo] = useState('');
-  const [result, setResult] = useState('');
-  const [history, setHistory] = useState([]);
-  const [line, setLine] = useState([]);
+  const [listItem, setListItem] = useState('');
+  const [list, setList] = useState([]);
 
-  const minusPressed = () => {
-    setResult(parseInt(numberOne) - parseInt(numberTwo)); 
-    setLine(numberOne + "-" + numberTwo + "=")
-
+  const add = () => {
+    setList([...list, {item: listItem}]); 
+    setListItem('')
     }
 
-  const plusPressed = () => {
-    setResult(parseInt(numberOne) + parseInt(numberTwo)); 
-    setLine(numberOne + "+" + numberTwo + "=")
-
+  const clear = () => {
+    setList([])
+    setListItem('')
   }
-
-  useEffect(() => {
-    setHistory([...history, {line: line + result}]); 
-}, [result]);
-
 
   return (
     <View style={styles.container}>
 
-      <Text style={styles.text}>Result: {result}</Text>
 
-      <TextInput style={styles.input} keyboardType="numeric" onChangeText={numberOne => setNumberOne(numberOne)} value={numberOne}/>
-      <TextInput style={styles.input} keyboardType="numeric" onChangeText={numberTwo => setNumberTwo(numberTwo)} value={numberTwo}/>
+      <TextInput style={styles.input} onChangeText={listItem => setListItem(listItem)} value={listItem}/>
       
       <View style={styles.button}>
-      <Button onPress={minusPressed} title=" - " />
-      <Button onPress={plusPressed} title=" + " />
+      <Button onPress={add} title=" Add " />
+      <Button onPress={clear} title=" Clear " />
       </View>
 
-      <Text style={styles.text}>History:</Text>
+      <Text style={styles.text}>Shopping List:</Text>
       <FlatList
-        data={history}
-        renderItem={({item}) => <Text>{item.line}</Text>}
+        data={list}
+        renderItem={({item}) => <Text>{item.item}</Text>}
         keyExtractor={(item, index) => index.toString()}
       />
 
