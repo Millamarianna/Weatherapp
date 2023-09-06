@@ -1,41 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, FlatList, Button, TextInput} from 'react-native';
-import React, { useState } from 'react';
+import { StyleSheet} from 'react-native';
+import React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Calculator from './Calculator';
+import History from './History';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [listItem, setListItem] = useState('');
-  const [list, setList] = useState([]);
-
-  const add = () => {
-    setList([...list, {item: listItem}]); 
-    setListItem('')
-    }
-
-  const clear = () => {
-    setList([])
-    setListItem('')
-  }
+  
 
   return (
-    <View style={styles.container}>
-
-
-      <TextInput style={styles.input} onChangeText={listItem => setListItem(listItem)} value={listItem}/>
-      
-      <View style={styles.button}>
-      <Button onPress={add} title=" Add " />
-      <Button onPress={clear} title=" Clear " />
-      </View>
-
-      <Text style={styles.text}>Shopping List:</Text>
-      <FlatList
-        data={list}
-        renderItem={({item}) => <Text>{item.item}</Text>}
-        keyExtractor={(item, index) => index.toString()}
-      />
-
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+      <Stack.Screen
+          name="Calculator"
+          component={Calculator}
+          options={{title: 'Calculator'}}
+        />
+        <Stack.Screen name="History" component={History} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
