@@ -1,108 +1,88 @@
-import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, Alert, StyleSheet, View, Button, TextInput } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
-import * as Location from 'expo-location';
+import { useState, useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, TextInput, Button, FlatList } from 'react-native';
+import * as SQLite from 'expo-sqlite'
 
+const db = SQLite.openDatabase('shopdb.db');
 
 export default function App() {
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
-  const [title, setTitle] = useState('');
-  const [ready, setReady] = useState(true)
+
+  const [amount, setAmount] = useState('');
+  const [product, setProduct] = useState('');
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('No permission to get location')
-        return;
-      }
-      let location = await Location.getCurrentPositionAsync({});
-      setLatitude(location.coords.latitude);
-      setLongitude(location.coords.longitude);
-      setReady(false);
-    })();
-  }, []);
+    db.transaction(tx => {
+    tx.executeSql('create table if not exists list (id integer primary key not null, product text, amount text);');
+    }, () => console.error("Error when creating DB"), updateList);
+    }, []);
 
+ const updateList = () => {
+  db.transaction(tx => {
+    tx.executeSql('select * from list;', [], (_, { rows }) =>
+    setItems(rows._array)
+    );
+    }, null, null);
+    
+ }
 
-  const getCoordinates = async () => {
-    const url = `https://www.mapquestapi.com/geocoding/v1/address?key=XyIkq6OIN8V6qYs6m9qm83fLLkSAU5aS&location=${title}`;
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      return data
-    } catch (error) {
-      Alert.alert('Error', error.message)
-    };
+ const saveItem = () => {
+  db.transaction(tx => {
+  tx.executeSql('insert into list (product, amount) values (?, ?);',
+  [product, amount]);
+  }, null, updateList)
   }
 
-  const getAddress = async () => {
-    try {
-      const data = await getCoordinates();
-      setLatitude(data.results[0].locations[0].latLng.lat);
-      setLongitude(data.results[0].locations[0].latLng.lng);
-    } catch (error) {
-      Alert.alert('Error', error.message)
-    };
-  }
+  const deleteItem = (id) => {
+    db.transaction(
+    tx => {tx.executeSql('delete from list where id = ?;', [id]);}, null, updateList)
+    }
 
-  return (<View style={styles.container}>
-    {ready ? (<ActivityIndicator size="large" />) :
-      (
-          <MapView
-            style={{ ...StyleSheet.absoluteFillObject }}
-            initialRegion={{
-              latitude: parseFloat(latitude),
-              longitude: parseFloat(longitude),
-              latitudeDelta: 0.0322,
-              longitudeDelta: 0.0221,
-            }}
-            region={{
-              latitude: parseFloat(latitude),
-              longitude: parseFloat(longitude),
-              latitudeDelta: 0.0322,
-              longitudeDelta: 0.0221,
-            }}
-          >
-              <Marker
-                coordinate={{
-                  latitude: parseFloat(latitude),
-                  longitude: parseFloat(longitude)
-                }} />
-          </MapView>)}
 
-          <TextInput
-            style={{
-              backgroundColor: '#fff',
-              fontSize: 18,
-              height: 50,
-              width: 250,
-              borderTopWidth: 1,
-              borderLeftWidth: 1,
-              borderRightWidth: 2,
-              borderBottomWidth: 2,
-            }}
-            placeholder='Type an address'
-            value={title}
-            onChangeText={title => setTitle(title)}
-          />
-          <Button title="Search" onPress={getAddress} />
-      
-  </View>);
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={{ marginTop: 50 }}
+        placeholder={'Product'}
+        onChangeText={product => setProduct(product)}
+        value={product} />
+      <TextInput
+        keyboardType='numeric'
+        placeholder='Amount'
+        onChangeText={amount => setAmount(amount)}
+        value={amount} />
+      <Button onPress={saveItem} title="Save" />
+      <StatusBar style="auto" />
+      <Text>Shopping list</Text>
+      <FlatList
+      keyExtractor={item => item.id.toString()}
+        data={items}
+        renderItem={({ item }) => 
+        <View style={styles.listcontainer}>
+        <Text>{`${item.product}, ${item.amount}`}</Text>
+        <Text style={{color: '#0000ff'}} onPress={() => deleteItem(item.id)}>bought</Text>
+        </View>}
+      />
+    </View>
+  );
 }
-
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 10,
+    gap: 15,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
   },
-  inner: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+  listcontainer: {
+    flexDirection: 'row',
+    flex: 2,
+    gap: 10,
+    padding: 2,
+    backgroundColor: '#fff',
+    alignItems: 'center'
   },
 });
