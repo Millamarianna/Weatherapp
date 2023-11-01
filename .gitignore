@@ -31,6 +31,9 @@ yarn-error.*
 # local env files
 .env*.local
 
+# ignore dotenv configuration file
+.env
+
 # typescript
 *.tsbuildinfo
 

@@ -1,22 +1,14 @@
 export default [
     {
         name:'Etusivu',
-        iconType:'Material',
+        iconName:'home'
+    },
+    {
+        name:'Tallennetut vaatteet',
+        iconName:'content-save-cog'
+    },
+    {
+        name:'Kirjaudu sisään/ulos',
         iconName:'account'
-    },
-    {
-        name:'Settings',
-        iconType:'Feather',
-        iconName:'adjust'
-    },
-    {
-        name:'Saved Items',
-        iconType:'Material',
-        iconName:'air-filter'
-    },
-    {
-        name:'Refer a Friend!',
-        iconType:'FontAwesome5',
-        iconName:'adjust'
     }
  ]

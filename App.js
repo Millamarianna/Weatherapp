@@ -1,83 +1,128 @@
-import * as React from 'react';
-
+import React, {useState, useEffect} from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import SavedScreen from './screens/Saved';
-import ReferScreen from './screens/Refer';
-import DrawerItems from './constants/DrawerItems';
+import LoginScreen from './screens/Login';
+import HomeScreen from './screens/Home';
+import LogOutScreen from './screens/LogOut';
 import Header from './components/Header';
-import Etusivu from './screens/Etusivu';
-import SettingsScreen from './screens/Settings';
+import { FIREBASE_AUTH } from './firebaseConfig';
+import { User, onAuthStateChanged } from 'firebase/auth';
 
 const Drawer = createDrawerNavigator();
 
 export default function App() {
+  const [user, setUser] = useState(null);
 
+
+  useEffect(() => {
+    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      setUser(user);
+      console.log('user', user);
+    });
+  }, []);
 
   return (
     <NavigationContainer>
-
       <Drawer.Navigator
         drawerType="front"
-        initialRouteName="Etusivu"
+        initialRouteName="Home"
         screenOptions={{
           activeTintColor: '#e91e63',
           itemStyle: { marginVertical: 10 },
         }}
       >
+        <Drawer.Screen
+          key='Etusivu'
+          name='Etusivu'
+          options={{
+            drawerIcon: ({ focused }) =>
 
-        {
-          DrawerItems.map(drawer =>
-            <Drawer.Screen
-              key={drawer.name}
-              name={drawer.name}
-              options={{
-                drawerIcon: ({ focused }) =>
-                  drawer.iconType === 'Material'
-                    ?
-                    <MaterialCommunityIcons
-                      name={drawer.iconName}
-                      size={24}
-                      color={focused ? "#e91e63" : "black"}
-                    />
-                    :
-                    drawer.iconType === 'Feather' ?
-                      <MaterialCommunityIcons
-                        name={drawer.iconName}
-                        size={24}
-                        color={focused ? "#e91e63" : "black"}
-                      />
-                      :
-                      <MaterialCommunityIcons
-                        name={drawer.iconName}
-                        size={24}
-                        color={focused ? "#e91e63" : "black"}
-                      />
-                ,
-                headerShown: true,
-                header: ({ scene, route, options }) => {
-                  const title =
-                    options.headerTitle !== undefined
-                      ? options.headerTitle
-                      : options.title !== undefined
-                        ? options.title
-                        : route.name;
+              <MaterialCommunityIcons
+                name='home'
+                size={24}
+                color={focused ? "#e91e63" : "black"}
+              />
+            ,
+            headerShown: true,
+            header: ({ scene, route, options }) => {
+              const title = route.name;
 
-                  return (
-                    <Header screen={title} />
-                  );
-                }
-              }}
-              component={
-                drawer.name === 'Etusivu' ? Etusivu
-                  : drawer.name === 'Settings' ? SettingsScreen
-                    : drawer.name === 'Saved Items' ? SavedScreen
-                      : ReferScreen
-              }
+              return (
+                <Header screen={title} />
+              );
+            }
+          }}
+          component={HomeScreen}
+        />
+        <Drawer.Screen
+          key='Tallennetut vaatteet'
+          name='Tallennetut vaatteet'
+          options={{
+            drawerIcon: ({ focused }) =>
+              <MaterialCommunityIcons
+                name='content-save-cog'
+                size={24}
+                color={focused ? "#e91e63" : "black"}
+              />
+            ,
+            headerShown: true,
+            header: ({ scene, route, options }) => {
+              const title = route.name;
+              return (
+                <Header screen={title} />
+              );
+            }
+          }}
+          component={SavedScreen}
+        />
+        {user ? (<Drawer.Screen
+          key='Kirjaudu ulos'
+          name='Kirjaudu ulos'
+          options={{
+            drawerIcon: ({ focused }) =>
 
-            />)
-        }
+              <MaterialCommunityIcons
+                name='logout'
+                size={24}
+                color={focused ? "#e91e63" : "black"}
+              />
+            ,
+            headerShown: true,
+            header: ({ scene, route, options }) => {
+              const title = route.name;
+
+              return (
+                <Header screen={title} />
+              );
+            }
+          }}
+          component={LogOutScreen}
+        />) : (<Drawer.Screen
+          key='Kirjaudu sisään'
+          name='Kirjaudu sisään'
+          options={{
+            drawerIcon: ({ focused }) =>
+
+              <MaterialCommunityIcons
+                name='login'
+                size={24}
+                color={focused ? "#e91e63" : "black"}
+              />
+            ,
+            headerShown: true,
+            header: ({ scene, route, options }) => {
+              const title = route.name;
+
+              return (
+                <Header screen={title} />
+              );
+            }
+          }}
+          component={LoginScreen}
+        />)}
+
       </Drawer.Navigator>
     </NavigationContainer>
 

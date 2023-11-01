@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView, SafeAreaView, Pressable, ActivityIndicator, StyleSheet, Alert, Text, View, Image, TextInput, Button, FlatList, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard } from 'react-native';
 
+
 import * as Location from 'expo-location';
 
 export default function Weather({ setRainyWeather, setTodaysWeather }) {
@@ -15,10 +16,6 @@ export default function Weather({ setRainyWeather, setTodaysWeather }) {
   const [wind12, setWind12] = useState('');
   const [wind15, setWind15] = useState('');
   const [wind18, setWind18] = useState('');
-  const [windDirection9, setWindDirection9] = useState('');
-  const [windDirection12, setWindDirection12] = useState('');
-  const [windDirection15, setWindDirection15] = useState('');
-  const [windDirection18, setWindDirection18] = useState('');
   const [icon9, setIcon9] = useState('');
   const [icon12, setIcon12] = useState('');
   const [icon15, setIcon15] = useState('');
@@ -55,24 +52,21 @@ export default function Weather({ setRainyWeather, setTodaysWeather }) {
         fetch(`http://api.weatherapi.com/v1/forecast.json?key=620ea7f6b6c641fc94893159230510&q=${city}&days=10&aqi=no&alerts=no`)
           .then(response => response.json())
           .then(data => {
+            console.log(day)
             setTodaysWeather(data.forecast.forecastday[day].day.avgtemp_c);
             setDate(data.forecast.forecastday[day].hour[0].time.substr(8, 2)+"."+data.forecast.forecastday[day].hour[0].time.substr(5, 2)+"."+data.forecast.forecastday[day].hour[0].time.substr(0,4));
             setRainyWeather(data.forecast.forecastday[day].day.daily_will_it_rain);
             setWeather9(data.forecast.forecastday[day].hour[9]);
             setWind9(Math.trunc(data.forecast.forecastday[day].hour[9].wind_kph.toString() / 3.6));
-            setWindDirection9(data.forecast.forecastday[day].hour[9].wind_dir);
             setIcon9(data.forecast.forecastday[day].hour[9].condition.icon.substr(-7, 7).toString());
             setWeather12(data.forecast.forecastday[day].hour[12]);
             setWind12(Math.trunc(data.forecast.forecastday[day].hour[12].wind_kph.toString() / 3.6));
-            setWindDirection12(data.forecast.forecastday[day].hour[12].wind_dir);
             setIcon12(data.forecast.forecastday[day].hour[12].condition.icon.substr(-7, 7).toString());
             setWeather15(data.forecast.forecastday[day].hour[15]);
             setWind15(Math.trunc(data.forecast.forecastday[day].hour[15].wind_kph.toString() / 3.6));
-            setWindDirection15(data.forecast.forecastday[day].hour[15].wind_dir);
             setIcon15(data.forecast.forecastday[day].hour[15].condition.icon.substr(-7, 7).toString());
             setWeather18(data.forecast.forecastday[day].hour[18]);
             setWind18(Math.trunc(data.forecast.forecastday[day].hour[18].wind_kph.toString() / 3.6));
-            setWindDirection18(data.forecast.forecastday[day].hour[18].wind_dir);
             setIcon18(data.forecast.forecastday[day].hour[18].condition.icon.substr(-7, 7).toString());
             setWeatherLoading(false);
           })
@@ -90,15 +84,14 @@ export default function Weather({ setRainyWeather, setTodaysWeather }) {
 
   const plusDay = () => {
     setDay(day + 1)
+    
   }
 
   const minusDay = () => {
     setDay(day - 1)
   }
 
-  const directionIcon = () => {
-    
-  }
+ 
   return (
     <View style={styles.mainContainer}>
       <View style={styles.searchContainer}>

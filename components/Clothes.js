@@ -5,7 +5,7 @@ import { getDatabase, push, ref, onValue, remove } from 'firebase/database';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 
-import firebaseConfig from './firebaseConfig';
+import firebaseConfig from '../firebaseConfig';
 import Images from './Images';
 
 const app = initializeApp(firebaseConfig);

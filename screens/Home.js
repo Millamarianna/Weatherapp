@@ -5,7 +5,7 @@ import Weather from '../components/Weather';
 import Clothes from '../components/Clothes';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-export default function Etusivu() {
+export default function HomeScreen() {
    const [todaysWeather, setTodaysWeather] = useState('');
    const [rainyWeather, setRainyWeather] = useState('');
 

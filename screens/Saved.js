@@ -2,7 +2,11 @@ import { useState, useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, Image, TextInput, Button, FlatList, Keyboard } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, push, ref, onValue, remove } from 'firebase/database';
-import firebaseConfig from './firebaseConfig';
+import firebaseConfig from '../firebaseConfig';
+
+
+
+
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
