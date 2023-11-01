@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View, Image, TextInput, Button, FlatList, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, Button, FlatList, Keyboard } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, push, ref, onValue, remove } from 'firebase/database';
 import firebaseConfig from '../firebaseConfig';
-
-
-
+import { FIREBASE_AUTH } from '../firebaseConfig';
+import { User, onAuthStateChanged } from 'firebase/auth';
+import Images from '../components/Images';
+import WeatherCodes from '../constants/WeatherCodes';
 
 
 const app = initializeApp(firebaseConfig);
@@ -16,6 +17,15 @@ export default function SavedScreen() {
   const [weatherId, setWeatherId] = useState('');
   const [name, setName] = useState('');
   const [items, setItems] = useState([]);
+  const [user, setUser] = useState(null);
+
+
+  useEffect(() => {
+    onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      setUser(user);
+      console.log('user', user);
+    });
+  }, []);
 
 
   //hae kaikki tallennetut vaatteet items listaan id-keyn kanssa
@@ -56,7 +66,7 @@ export default function SavedScreen() {
   return (
     <View style={styles.bodyContainer}>
 
-      <TextInput
+      {user? (<><TextInput
         style={{ marginTop: 50 }}
         placeholder={'Nimi'}
         onChangeText={name => setName(name)}
@@ -70,15 +80,23 @@ export default function SavedScreen() {
         onChangeText={weatherId => setWeatherId(weatherId)}
         value={weatherId} />
       <Button onPress={saveItem} title="Save" />
+      </>) : <Text style={styles.text}>Kirjaudu sisään tallentaaksesi vaatteita!</Text>}
+      <View style={styles.listContainer}>
       <FlatList
         keyExtractor={(item, index) => index.toString()}
         data={items}
         renderItem={({ item }) =>
-          <View style={styles.listcontainer}>
-            <Text>{`${item.name}, ${item.photo}, ${item.weatherId}`}</Text>
-            <Text style={{ color: '#0000ff' }} onPress={() => deleteItem(item.key)}>bought</Text>
-          </View>}
+            <><Text>{`${item.name}, ${WeatherCodes[0][item.weatherId]}`}</Text>
+            <Image
+              style={{ width: 80, resizeMode: 'contain' }}
+              source={Images[item.photo]}
+            />
+            {user ? (<Text style={{ color: '#0000ff' }} onPress={() => deleteItem(item.key)}>bought</Text>) 
+            : <Text></Text>}
+            </>
+          }
       />
+      </View>
     </View>
   );
 }
@@ -93,6 +111,13 @@ const styles = StyleSheet.create({
     paddingLeft: 25,
     marginBottom: 40
   },
+  listContainer: {
+    flex: 1,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-end',
+    padding: 25,
+    marginBottom: 40
+  },
   title: {
     fontSize: 60,
     color: '#fff'
@@ -100,5 +125,9 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 24,
     color: '#fff'
+  },
+  text: {
+    fontSize: 16,
+    color: '#000'
   }
 });
