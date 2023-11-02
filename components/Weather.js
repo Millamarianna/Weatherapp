@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { ScrollView, SafeAreaView, Pressable, ActivityIndicator, StyleSheet, Alert, Text, View, Image, TextInput, Button, FlatList, TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard } from 'react-native';
+import { Pressable, ActivityIndicator, StyleSheet, Alert, Text, View, Image, TextInput, Keyboard } from 'react-native';
 
 
 import * as Location from 'expo-location';

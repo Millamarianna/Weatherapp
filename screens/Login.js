@@ -27,7 +27,7 @@ const LoginScreen = ({ navigation }) => {
       alert('Kirjautuminen epäonnistui:' + error.message);
     } finally {
       setLoading(false);
-      navigation.navigate('Home');
+      navigation.navigate('Etusivu');
     }
   }
 
