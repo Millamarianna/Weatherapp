@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Pressable, ActivityIndicator, StyleSheet, Alert, Text, View, Image, TextInput, Keyboard } from 'react-native';
-
+import { API } from '../firebaseConfig';
 
 import * as Location from 'expo-location';
 
@@ -26,7 +26,6 @@ export default function Weather({ setRainyWeather, setTodaysWeather }) {
   const [day, setDay] = useState(0);
   const [date, setDate] = useState('');
 
-
   // Haetaan käyttäjän koordinaatit ja niiden avulla kaupunki
   useEffect(() => {
     (async () => {
@@ -49,7 +48,7 @@ export default function Weather({ setRainyWeather, setTodaysWeather }) {
     () => {
       console.log(city);
       if (city != null) {
-        fetch(`http://api.weatherapi.com/v1/forecast.json?key=620ea7f6b6c641fc94893159230510&q=${city}&days=10&aqi=no&alerts=no`)
+        fetch(`http://api.weatherapi.com/v1/forecast.json?key=${API}&q=${city}&days=10&aqi=no&alerts=no`)
           .then(response => response.json())
           .then(data => {
             console.log(day)

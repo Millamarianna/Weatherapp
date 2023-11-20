@@ -1,12 +1,14 @@
 import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { initializeApp } from 'firebase/app';
-import { getDatabase, push, ref, onValue, remove, set } from 'firebase/database';
+import { getDatabase } from 'firebase/database';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import firebaseConfig from '../firebaseConfig';
 import { FIREBASE_AUTH } from '../firebaseConfig';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
@@ -16,6 +18,7 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const auth = FIREBASE_AUTH;
+  
 
   const signIn = async () => {
     setLoading(true);
@@ -46,6 +49,7 @@ const LoginScreen = ({ navigation }) => {
 
   return (
       <View style={styles.container}>
+        <KeyboardAwareScrollView>
         <Text style={styles.subtitle}>Kirjaudu sisään</Text>
         <TextInput
           placeholder="Sähköposti"
@@ -117,6 +121,7 @@ const LoginScreen = ({ navigation }) => {
               <MaterialIcons name="arrow-forward-ios" size={22} color="#fff" />
             </TouchableOpacity>
           </>}
+          </KeyboardAwareScrollView>
       </View>
 
   );

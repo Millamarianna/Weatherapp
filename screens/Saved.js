@@ -9,7 +9,6 @@ import Images from '../components/Images';
 import WeatherCodes from '../constants/WeatherCodes';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
@@ -145,6 +144,7 @@ export default function SavedScreen() {
               onChangeText={name => setName(name)}
               value={name} />
             <DropDownPicker
+              itemKey="label"
               placeholder='Valitse vaatteen käyttölämpötilat'
               open={open}
               value={suggestions}
@@ -163,12 +163,12 @@ export default function SavedScreen() {
               <Text style={styles.text}>Näytä ehdotukset</Text>
             </Pressable>
             {show ? <FlatList
-              keyExtractor={(item, index) => index.toString()}
+              keyExtractor={(item, index) => {return index.toString()}}
               data={allSuggestions}
               renderItem={({ item }) =>
                 <><Text style={styles.subtitle}>{`${item.name}`}</Text>
                   <Text>Käyttölämpötilat:</Text>
-                  {WID(item.weatherId).map((item2, index) => { return <Text>{`${WeatherCodes[0][item2]}`}</Text> })}
+                  {WID(item.weatherId).map((item2, index) => { return <Text key={index}>{`${WeatherCodes[0][item2]}`}</Text> })}
                 </>}
             />
               : null}
@@ -177,13 +177,13 @@ export default function SavedScreen() {
           <Text style={styles.text}>Kirjaudu sisään tehdäksesi ehdotuksia vaatelistaan!</Text>}
       <View style={styles.listContainer}>
         <FlatList
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item, index) => {return index.toString()}}
           data={items}
           renderItem={({ item }) =>
             <>
               <Text style={styles.subtitle}>{`${item.name}`}</Text>
               <Text>Käyttölämpötilat:</Text>
-              {WID(item.weatherId).map((item2, index) => { return <Text>{`${WeatherCodes[0][item2]}`}</Text> })}
+              {WID(item.weatherId).map((item2, index) => { return <Text key={index}>{`${WeatherCodes[0][item2]}`}</Text> })}
               <Image
                 style={{ width: 80, resizeMode: 'contain' }}
                 source={Images[item.photo]}
